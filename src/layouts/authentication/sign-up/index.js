@@ -34,12 +34,29 @@ import Socials from "layouts/authentication/components/Socials";
 import Separator from "layouts/authentication/components/Separator";
 
 // Images
+import { useNavigate } from "react-router";
 import curved6 from "assets/images/curved-images/curved14.jpg";
+import FirebaseAuthService from "FirebaseAuthService";
 
 function SignUp() {
   const [agreement, setAgremment] = useState(true);
-
+  const [username, setUserName]= useState("");
+  const [password, setPassword]= useState("");
   const handleSetAgremment = () => setAgremment(!agreement);
+  const navigate=useNavigate();
+  async function handleSubmit(event){
+    event.preventDefault();
+    try{
+      console.log(username,password);
+     await FirebaseAuthService.registerUser(username, password);
+       setUserName("");
+       setPassword("");
+       navigate('/authentication/sign-in');
+    }
+    catch (error){
+      alert(error.message)
+    }
+  }
 
   return (
     <BasicLayout
@@ -60,13 +77,10 @@ function SignUp() {
         <SuiBox pt={2} pb={3} px={3}>
           <SuiBox component="form" role="form">
             <SuiBox mb={2}>
-              <SuiInput placeholder="Name" />
+            <SuiInput type="email" placeholder="Email" value={username} required onChange={(e) => setUserName(e.target.value)} />
             </SuiBox>
             <SuiBox mb={2}>
-              <SuiInput type="email" placeholder="Email" />
-            </SuiBox>
-            <SuiBox mb={2}>
-              <SuiInput type="password" placeholder="Password" />
+            <SuiInput type="password" placeholder="Password" value={password} required onChange={(e) => setPassword(e.target.value)} />
             </SuiBox>
             <SuiBox display="flex" alignItems="center">
               <Checkbox checked={agreement} onChange={handleSetAgremment} />
@@ -83,7 +97,7 @@ function SignUp() {
               </SuiTypography>
             </SuiBox>
             <SuiBox mt={4} mb={1}>
-              <SuiButton variant="gradient" color="dark" fullWidth>
+              <SuiButton variant="gradient" color="dark" fullWidth onClick={(e)=>handleSubmit(e)}>
                 sign up
               </SuiButton>
             </SuiBox>

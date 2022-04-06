@@ -16,7 +16,7 @@ Coded by www.creative-tim.com
 import { useState, useEffect, useMemo } from "react";
 
 // react-router components
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, useNavigate,Link } from "react-router-dom";
 
 // @mui material components
 import { ThemeProvider } from "@mui/material/styles";
@@ -44,17 +44,19 @@ import routes from "routes";
 
 // Soft UI Dashboard React contexts
 import { useSoftUIController, setMiniSidenav, setOpenConfigurator } from "context";
-
+import FirebaseAuthService from "FirebaseAuthService";
 // Images
 import brand from "assets/images/logo-ct.png";
-
+import SignIn from "layouts/authentication/sign-in";
 export default function App() {
   const [controller, dispatch] = useSoftUIController();
   const { miniSidenav, direction, layout, openConfigurator, sidenavColor } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
+  const [reDirect,setReDirect]= useState(false);
   const [rtlCache, setRtlCache] = useState(null);
   const { pathname } = useLocation();
-
+  const navigate=useNavigate();
+  const token= localStorage.getItem("token");
   // Cache for the rtl
   useMemo(() => {
     const cacheRtl = createCache({
@@ -80,7 +82,19 @@ export default function App() {
       setOnMouseEnter(false);
     }
   };
-
+  useEffect(()=>{
+    const token= localStorage.getItem("token");        
+    if(token === null) setReDirect(true);
+    else setReDirect(false);
+    console.log(reDirect);
+  },[])
+  useEffect(()=>{
+        const token= localStorage.getItem("token");        
+        if(token === null) setReDirect(true);
+        else setReDirect(false);
+        console.log(reDirect);
+       
+  },[pathname])
   // Change the openConfigurator state
   const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
 
@@ -100,9 +114,9 @@ export default function App() {
       if (route.collapse) {
         return getRoutes(route.collapse);
       }
-
-      if (route.route) {
-        return <Route exact path={route.route} element={route.component} key={route.key} />;
+      if (route.route ) {         
+              return <Route  exact path={route.route} element={localStorage.getItem('token') === null ? <Navigate to="/authentication/sign-in"/>: route.component} key={route.key} />;
+        
       }
 
       return null;
@@ -131,7 +145,7 @@ export default function App() {
       </Icon>
     </SuiBox>
   );
-console.log(routes);
+//console.log(routes);
   return direction === "rtl" ? (
     <CacheProvider value={rtlCache}>
       <ThemeProvider theme={themeRTL}>
@@ -152,8 +166,10 @@ console.log(routes);
         )}
         {layout === "vr" && <Configurator />}
         <Routes>
-          {getRoutes(routes)}
-          <Route path="*" element={<Navigate to="/dashboard" />} />
+      {/* <Route path="/authentication/sign-in" element={<SignIn/>}/> */}
+        { getRoutes(routes)}
+        <Route path="*" element={<Navigate to="/dashboard" />} />
+    
         </Routes>
       </ThemeProvider>
     </CacheProvider>
@@ -176,6 +192,7 @@ console.log(routes);
       )}
       {layout === "vr" && <Configurator />}
       <Routes>
+      <Route path="/authentication/sign-in" element={<SignIn/>}/>
         {getRoutes(routes)}
         <Route path="*" element={<Navigate to="/dashboard" />} />
       </Routes>

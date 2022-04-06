@@ -16,7 +16,7 @@ Coded by www.creative-tim.com
 import { useEffect } from "react";
 
 // react-router-dom components
-import { useLocation, NavLink } from "react-router-dom";
+import { useLocation, NavLink, Navigate } from "react-router-dom";
 
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
@@ -73,6 +73,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   // Render all the routes from the routes.js (All the visible items on the Sidenav)
   const renderRoutes = routes.map(({ type, name, icon, title, noCollapse, key, route, href }) => {
     let returnValue;
+    //console.log(type, name, icon, title, noCollapse, key, route, href)
 
     if (type === "collapse") {
       returnValue = href ? (
@@ -128,6 +129,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   });
 
   return (
+    localStorage.getItem('token')===null ? <Navigate to='/authentication/sign-in'/>:
     <SidenavRoot {...rest} variant="permanent" ownerState={{ transparentSidenav, miniSidenav }}>
       <SuiBox pt={3} pb={1} px={4} textAlign="center">
         <SuiBox

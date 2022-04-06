@@ -16,7 +16,7 @@ Coded by www.creative-tim.com
 import { useEffect } from "react";
 
 // react-router-dom components
-import { useLocation } from "react-router-dom";
+import { useLocation, Navigate } from "react-router-dom";
 
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
@@ -37,6 +37,7 @@ function DashboardLayout({ children }) {
   }, [pathname]);
 
   return (
+    
     <SuiBox
       sx={({ breakpoints, transitions, functions: { pxToRem } }) => ({
         p: 3,

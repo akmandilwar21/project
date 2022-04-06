@@ -37,23 +37,19 @@ Coded by www.creative-tim.com
 
 // Soft UI Dashboard React layouts
 import Dashboard from "layouts/dashboard";
-import Tables from "layouts/tables";
-import Billing from "layouts/billing";
-import VirtualReality from "layouts/virtual-reality";
-import RTL from "layouts/rtl";
-import Profile from "layouts/profile";
+import Cores from "layouts/Cores";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
 import DetailPage from "layouts/details";
+import DetailPageCores from "layouts/detailPageCores";
 // Soft UI Dashboard React icons
 import Shop from "examples/Icons/Shop";
-import Office from "examples/Icons/Office";
-import Settings from "examples/Icons/Settings";
+import { useState } from "react";
+import FirebaseAuthService from "FirebaseAuthService";
 import Document from "examples/Icons/Document";
 import SpaceShip from "examples/Icons/SpaceShip";
-import CustomerSupport from "examples/Icons/CustomerSupport";
-import CreditCard from "examples/Icons/CreditCard";
-import Cube from "examples/Icons/Cube";
+const user = null; 
+FirebaseAuthService.subscribeToAuthChange(user);
 
 const routes = [
   {
@@ -64,33 +60,35 @@ const routes = [
     icon: <Shop size="12px" />,
     component: <Dashboard />,
     noCollapse: true,
-  },
-  {
-    type: "collapse",
-    name: "capsules",
-    key: "dashboard",
-    route: "/:id",
-    icon: <Shop size="12px" />,
+  },{
+    route: "/capsuals/:id",
     component:<DetailPage/>,
+  },
+  {
+    route: "/cores/:id",
+    component:<DetailPageCores/>,
+  },
+  {
+    type: "collapse",
+    name: "Capsuals",
+    key: "capsuals",
+    route: "/capsuals",
+    icon: <Shop size="12px" />,
+    component:<Dashboard/>,
     noCollapse: true,
   },
   {
     type: "collapse",
-    name: "Sign In",
-    key: "sign-in",
-    route: "/authentication/sign-in",
-    icon: <Document size="12px" />,
-    component: <SignIn />,
+    name: "Cores",
+    key: "cores",
+    route: "/cores",
+    icon: <Shop size="12px" />,
+    component:<Cores/>,
     noCollapse: true,
   },
   {
-    type: "collapse",
-    name: "Sign Up",
-    key: "sign-up",
     route: "/authentication/sign-up",
-    icon: <SpaceShip size="12px" />,
     component: <SignUp />,
-    noCollapse: true,
   },
 ];
 

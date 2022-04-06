@@ -16,7 +16,7 @@ Coded by www.creative-tim.com
 import { useState, useEffect } from "react";
 
 // react-router components
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, Navigate } from "react-router-dom";
 
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
@@ -57,6 +57,8 @@ import {
 // Images
 import team2 from "assets/images/team-2.jpg";
 import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
+import FirebaseAuthService from "FirebaseAuthService";
+import { useNavigate } from "react-router";
 
 function DashboardNavbar({ absolute, light, isMini }) {
   const [navbarType, setNavbarType] = useState();
@@ -64,7 +66,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator } = controller;
   const [openMenu, setOpenMenu] = useState(false);
   const route = useLocation().pathname.split("/").slice(1);
-
+  const navigate=useNavigate();
   useEffect(() => {
     // Setting the navbar type
     if (fixedNavbar) {
@@ -134,8 +136,21 @@ function DashboardNavbar({ absolute, light, isMini }) {
       />
     </Menu>
   );
+  async function handleSignOut(event){
+    event.preventDefault();
+    try{
+     await FirebaseAuthService.logoutUser();
+     localStorage.removeItem("token");
+     navigate('/authentication/sign-in');
+    
+    }
+    catch (error){
+      alert(error.message)
+    }
+  }
 
   return (
+    localStorage.getItem('token')===null ? <Navigate to='/authentication/sign-in'/>:
     <AppBar
       position={absolute ? "absolute" : navbarType}
       color="inherit"
@@ -155,7 +170,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
             </SuiBox>
             <SuiBox color={light ? "white" : "inherit"}>
               <Link to="/authentication/sign-in">
-                <IconButton sx={navbarIconButton} size="small">
+                <IconButton sx={navbarIconButton} size="small" onClick={(e) => handleSignOut(e)}>
                   <Icon
                     sx={({ palette: { dark, white } }) => ({
                       color: light ? white.main : dark.main,
@@ -168,39 +183,10 @@ function DashboardNavbar({ absolute, light, isMini }) {
                     fontWeight="medium"
                     color={light ? "white" : "dark"}
                   >
-                    Sign in
+                    Sign out
                   </SuiTypography>
                 </IconButton>
               </Link>
-              <IconButton
-                size="small"
-                color="inherit"
-                sx={navbarMobileMenu}
-                onClick={handleMiniSidenav}
-              >
-                <Icon className={light ? "text-white" : "text-dark"}>
-                  {miniSidenav ? "menu_open" : "menu"}
-                </Icon>
-              </IconButton>
-              <IconButton
-                size="small"
-                color="inherit"
-                sx={navbarIconButton}
-                onClick={handleConfiguratorOpen}
-              >
-                <Icon>settings</Icon>
-              </IconButton>
-              <IconButton
-                size="small"
-                color="inherit"
-                sx={navbarIconButton}
-                aria-controls="notification-menu"
-                aria-haspopup="true"
-                variant="contained"
-                onClick={handleOpenMenu}
-              >
-                <Icon className={light ? "text-white" : "text-dark"}>notifications</Icon>
-              </IconButton>
               {renderMenu()}
             </SuiBox>
           </SuiBox>

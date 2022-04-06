@@ -1,7 +1,7 @@
 import Grid from "@mui/material/Grid";
 import Icon from "@mui/material/Icon";
 import { useEffect } from "react";
-import { useNavigate, useLocation, Navigate } from "react-router";
+import { useNavigate } from "react-router";
 import $ from 'jquery';
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
@@ -13,7 +13,6 @@ import typography from "assets/theme/base/typography";
 import { useState } from "react";
 import Footer from "examples/Footer";
 import { grey } from "@mui/material/colors";
-
 import { collection,getDocs } from "firebase/firestore";
 const useStyle=makeStyles((theme)=>({
   root:{
@@ -63,25 +62,24 @@ const useStyle=makeStyles((theme)=>({
 
 
 
-function Dashboard() {
+function Cores() {
   const { size } = typography;
   const [users,setUsers]=useState([]);
   const classes=useStyle();
   const [data,setData]=useState([]);
-  const { pathname } = useLocation();
   useEffect(async() => {
-    await $.get('https://api.spacexdata.com/v3/capsules', (post)=>{
+    await $.get('https://api.spacexdata.com/v3/cores', (post)=>{
+      
       setData(post);
    })
   }, [])
-  console.log("Hello")
+
   
   const navigate=useNavigate();
   function handleClick(id){
-    navigate('/capsuals/'+ id);
+    navigate('/cores/'+ id);
   }
   return (
-    
     <DashboardLayout>
       <DashboardNavbar />
       <Grid container spacing={5} maxWid="sm" mt={2}>
@@ -94,16 +92,16 @@ function Dashboard() {
                        </Box>
                       
                        <CardActionArea>
-                         <img alt={n.capsule_serial}/>
+                         <img alt={n.core_serial}/>
                          
                          <CardContent>
-                         <Typography align='center' variant='h4'>{n.capsule_serial}</Typography>
+                         <Typography align='center' variant='h4'>{n.core_serial}</Typography>
                          <Typography align='center' variant='subtitle1'>{n.details}</Typography>
                        </CardContent>
                        </CardActionArea>
                        <CardActions>
                        <Box align="center">
-                          <Button onClick={()=>handleClick(n.capsule_serial)} color="primary" size="large" type="submit" variant="outlined">
+                          <Button onClick={()=>handleClick(n.core_serial)} color="primary" size="large" type="submit" variant="outlined">
                                 View Details
                           </Button>      
                        </Box>
@@ -120,4 +118,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default Cores;
