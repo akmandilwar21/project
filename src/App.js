@@ -14,6 +14,7 @@ Coded by www.creative-tim.com
 */
 
 import { useState, useEffect, useMemo } from "react";
+import { useSelector } from 'react-redux';
 
 // react-router components
 import { Routes, Route, Navigate, useLocation, useNavigate,Link } from "react-router-dom";
@@ -48,16 +49,17 @@ import FirebaseAuthService from "FirebaseAuthService";
 // Images
 import brand from "assets/images/logo-ct.png";
 import SignIn from "layouts/authentication/sign-in";
+import SignUp from "layouts/authentication/sign-up";
 export default function App() {
   const [controller, dispatch] = useSoftUIController();
   const { miniSidenav, direction, layout, openConfigurator, sidenavColor } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
-  const [reDirect,setReDirect]= useState(false);
   const [rtlCache, setRtlCache] = useState(null);
   const { pathname } = useLocation();
   const navigate=useNavigate();
-  const token= localStorage.getItem("token");
-  // Cache for the rtl
+  const isAuth= useSelector(state => state.auth.isAuthenticated);
+  const decode= useSelector(state => state.auth.data);
+  console.log(isAuth);
   useMemo(() => {
     const cacheRtl = createCache({
       key: "rtl",
@@ -82,19 +84,6 @@ export default function App() {
       setOnMouseEnter(false);
     }
   };
-  useEffect(()=>{
-    const token= localStorage.getItem("token");        
-    if(token === null) setReDirect(true);
-    else setReDirect(false);
-    console.log(reDirect);
-  },[])
-  useEffect(()=>{
-        const token= localStorage.getItem("token");        
-        if(token === null) setReDirect(true);
-        else setReDirect(false);
-        console.log(reDirect);
-       
-  },[pathname])
   // Change the openConfigurator state
   const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
 
@@ -108,14 +97,14 @@ export default function App() {
     document.documentElement.scrollTop = 0;
     document.scrollingElement.scrollTop = 0;
   }, [pathname]);
-
+console.log(isAuth);
   const getRoutes = (allRoutes) =>
     allRoutes.map((route) => {
       if (route.collapse) {
         return getRoutes(route.collapse);
       }
       if (route.route ) {         
-              return <Route  exact path={route.route} element={localStorage.getItem('token') === null ? <Navigate to="/authentication/sign-in"/>: route.component} key={route.key} />;
+              return <Route  exact path={route.route} element={ !isAuth && route.route!=="/authentication/sign-up" ? <Navigate to="/authentication/sign-in"/>: route.component} key={route.key} />;
         
       }
 
@@ -193,6 +182,7 @@ export default function App() {
       {layout === "vr" && <Configurator />}
       <Routes>
       <Route path="/authentication/sign-in" element={<SignIn/>}/>
+      <Route path="/authentication/sign-up" element={isAuth ? <Navigate to="/dashbord"/> : <SignUp/>}/>
         {getRoutes(routes)}
         <Route path="*" element={<Navigate to="/dashboard" />} />
       </Routes>

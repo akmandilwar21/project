@@ -13,8 +13,9 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
+import jwt_decode from "jwt-decode";
+import { useDispatch,useSelector } from "react-redux"
 // react-router-dom components
 import { Link, Navigate } from "react-router-dom";
 
@@ -34,20 +35,32 @@ import CoverLayout from "layouts/authentication/components/CoverLayout";
 import curved9 from "assets/images/curved-images/curved-6.jpg";
 import FirebaseAuthService from "FirebaseAuthService";
 import { useNavigate } from "react-router";
+import { authActions } from "store";
+
+
 
 function SignIn({existingUser}) {
   const [rememberMe, setRememberMe] = useState(true); 
   const [username, setUserName]= useState("");
   const [password, setPassword]= useState("");
   const navigate=useNavigate();
-
+  const dispatch= useDispatch();
+  const isAuth= useSelector(state => state.auth.isAuthenticated);
+  useEffect(() => {
+    console.log(isAuth);
+    if(isAuth) navigate('/dashboard');
+  },[])
 
   async function handleSubmit(event){
     event.preventDefault();
     try{
      let temp= await FirebaseAuthService.loginUser(username, password);
+       dispatch(authActions.login());
      const token = await Object.entries(temp.user)[5][1].b;
-     localStorage.setItem('token', token)
+     console.log(token.g);
+     const decoded = jwt_decode(token.g);
+     console.log(decoded);
+    dispatch(authActions.userData(decoded)) 
        navigate('/dashboard');
     }
     catch (error){
@@ -73,10 +86,10 @@ function SignIn({existingUser}) {
   }
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
-
+  console.log(isAuth);
   return (
         <div>
-          {localStorage.getItem('token') !==null ? <Navigate to="/dashboard"/> : 
+         
           <div>
                <CoverLayout
       title="Welcome back"
@@ -138,7 +151,7 @@ function SignIn({existingUser}) {
         </SuiBox>
       </SuiBox>
     </CoverLayout>  
-          </div>}
+          </div>
         
     </div>
   );

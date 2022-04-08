@@ -17,6 +17,8 @@ import { useState, useEffect } from "react";
 
 // react-router components
 import { useLocation, Link, Navigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { authActions } from "store";
 
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
@@ -67,6 +69,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const [openMenu, setOpenMenu] = useState(false);
   const route = useLocation().pathname.split("/").slice(1);
   const navigate=useNavigate();
+  const disPatch= useDispatch();
   useEffect(() => {
     // Setting the navbar type
     if (fixedNavbar) {
@@ -140,7 +143,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
     event.preventDefault();
     try{
      await FirebaseAuthService.logoutUser();
-     localStorage.removeItem("token");
+     disPatch(authActions.logout());
      navigate('/authentication/sign-in');
     
     }
@@ -148,9 +151,9 @@ function DashboardNavbar({ absolute, light, isMini }) {
       alert(error.message)
     }
   }
-
+  const isAuth= useSelector(state => state.auth.isAuthenticated);
   return (
-    localStorage.getItem('token')===null ? <Navigate to='/authentication/sign-in'/>:
+    !isAuth ? <Navigate to='/authentication/sign-in'/>:
     <AppBar
       position={absolute ? "absolute" : navbarType}
       color="inherit"

@@ -14,7 +14,7 @@ Coded by www.creative-tim.com
 */
 
 import { useEffect } from "react";
-
+import { useSelector } from 'react-redux';
 // react-router-dom components
 import { useLocation, NavLink, Navigate } from "react-router-dom";
 
@@ -49,6 +49,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const location = useLocation();
   const { pathname } = location;
   const collapseName = pathname.split("/").slice(1)[0];
+  const isAuth= useSelector(state => state.auth.isAuthenticated);
 
   const closeSidenav = () => setMiniSidenav(dispatch, true);
 
@@ -129,7 +130,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   });
 
   return (
-    localStorage.getItem('token')===null ? <Navigate to='/authentication/sign-in'/>:
+    !isAuth ? <Navigate to='/authentication/sign-in'/>:
     <SidenavRoot {...rest} variant="permanent" ownerState={{ transparentSidenav, miniSidenav }}>
       <SuiBox pt={3} pb={1} px={4} textAlign="center">
         <SuiBox
